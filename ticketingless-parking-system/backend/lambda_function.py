@@ -11,31 +11,114 @@ def lambda_handler(event, context):
 
     try:
 
-        body = json.loads(event["body"])
-
-        image = base64.b64decode(
-            body["image"]
+        body = json.loads(
+            event.get("body", "{}")
         )
 
-        status = body["status"]
+    except json.JSONDecodeError:
+
+        return {
+
+            "statusCode": 400,
+
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+
+            "body": json.dumps({
+
+                "success": False,
+                "message": "Invalid JSON request."
+
+            })
+
+        }
+
+    image = body.get("image")
+    status = body.get("status")
+
+    if not image:
+
+        return {
+
+            "statusCode": 400,
+
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+
+            "body": json.dumps({
+
+                "success": False,
+                "message": "Image is required."
+
+            })
+
+        }
+
+    if status not in ("Entry", "Exit"):
+
+        return {
+
+            "statusCode": 400,
+
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+
+            "body": json.dumps({
+
+                "success": False,
+                "message": "Status must be 'Entry' or 'Exit'."
+
+            })
+
+        }
+
+    try:
+
+        image_bytes = base64.b64decode(
+            image
+        )
 
         result = process_vehicle(
-            image,
+            image_bytes,
             status
         )
 
         return {
+
             "statusCode": 200,
+
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+
             "body": json.dumps(result)
+
         }
 
     except Exception as error:
 
         return {
+
             "statusCode": 500,
-            "body": json.dumps(
-                {
-                    "error": str(error)
-                }
-            )
+
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+
+            "body": json.dumps({
+
+                "success": False,
+                "message": "Internal server error.",
+                "error": str(error)
+
+            })
+
         }

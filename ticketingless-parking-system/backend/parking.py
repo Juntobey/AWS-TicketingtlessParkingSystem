@@ -1,13 +1,11 @@
-import uuid
-
-import boto3
-
-from config import (
-    AWS_REGION,
-    S3_BUCKET
+from s3_service import (
+    upload_image,
+    copy_to_rekognition_bucket
 )
 
-from rekognition_service import detect_license_plate
+from rekognition_service import (
+    detect_license_plate
+)
 
 from database import (
     create_entry,
@@ -15,62 +13,90 @@ from database import (
     find_active_session
 )
 
-s3 = boto3.client(
-    "s3",
-    region_name=AWS_REGION
-)
-
-
-def upload_image(image_bytes):
-    """
-    Upload image to Amazon S3.
-    """
-
-    filename = f"{uuid.uuid4()}.jpg"
-
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=filename,
-        Body=image_bytes
-    )
-
-    return filename
-
 
 def process_vehicle(image_bytes, status):
     """
-    Main business logic.
+    Main parking business logic.
+
+    Workflow:
+
+    Upload Image
+        ↓
+    Copy to Ireland
+        ↓
+    Detect Licence Plate
+        ↓
+    Entry / Exit Logic
+        ↓
+    Database
     """
 
-    image_name = upload_image(image_bytes)
+   
+    # Upload image to Cape Town
+    
 
-    plate_results = detect_license_plate(
-        S3_BUCKET,
-        image_name
+    image_key = upload_image(
+        image_bytes
     )
 
-    if not plate_results:
+    
+    # Copy image to Ireland
+    
+
+    copy_to_rekognition_bucket(
+        image_key
+    )
+
+    
+    # Detect licence plate
+    
+
+    plate_result = detect_license_plate(
+        image_key
+    )
+
+    if plate_result is None:
 
         return {
+
             "success": False,
-            "message": "No licence plate detected."
+            "message": "No valid South African licence plate detected."
+
         }
 
-    license_plate = plate_results[0]
+    license_plate = plate_result["plate"]
+
+    confidence = plate_result["confidence"]
+
+    pattern = plate_result["pattern"]
+
+    
+    # Vehicle Entry
+    
 
     if status == "Entry":
 
         create_entry(
+
             license_plate,
-            image_name
+            image_key
+
         )
 
         return {
+
             "success": True,
-            "licensePlate": license_plate,
             "status": "Entry",
+            "licensePlate": license_plate,
+            "confidence": confidence,
+            "pattern": pattern,
             "message": "Vehicle entered successfully."
+
         }
+
+    
+    # Vehicle Exit
+    
 
     session = find_active_session(
         license_plate
@@ -78,11 +104,31 @@ def process_vehicle(image_bytes, status):
 
     if session:
 
-        update_exit(license_plate)
+        update_exit(
+            license_plate
+        )
+
+        return {
+
+            "success": True,
+            "status": "Exit",
+            "licensePlate": license_plate,
+            "confidence": confidence,
+            "pattern": pattern,
+            "message": "Vehicle exited successfully."
+
+        }
+
+    
+    # Vehicle not found
 
     return {
-        "success": True,
-        "licensePlate": license_plate,
+
+        "success": False,
         "status": "Exit",
-        "message": "Vehicle exited successfully."
+        "licensePlate": license_plate,
+        "confidence": confidence,
+        "pattern": pattern,
+        "message": "No active parking session found."
+
     }

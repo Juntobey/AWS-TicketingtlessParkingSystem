@@ -1,16 +1,25 @@
 import os
 
+# Primary AWS Region
+AWS_REGION = "af-south-1"
 
-# AWS Configuration
-# ==========================
+# Rekognition Region
+REKOGNITION_REGION = "eu-west-1"
 
-AWS_REGION = os.environ.get("AWS_REGION", "af-south-1")
+# Cape Town Image Bucket
+SOURCE_BUCKET = os.environ.get(
+    "SOURCE_BUCKET",
+    "ticketless-parking-images-tobeyn2026"
+)
 
-S3_BUCKET = os.environ.get("S3_BUCKET")
+# Ireland Rekognition Bucket
+REKOGNITION_BUCKET = os.environ.get(
+    "REKOGNITION_BUCKET",
+    "ticketless-parking-rekognition-tobey2026"
+)
 
 
-# Database Configuration
-# ==========================
+# PostgreSQL Configuration
 
 DB_HOST = os.environ.get("DB_HOST")
 
@@ -20,4 +29,17 @@ DB_USER = os.environ.get("DB_USER")
 
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
-DB_PORT = int(os.environ.get("DB_PORT", 3306))
+DB_PORT = int(
+    os.environ.get(
+        "DB_PORT",
+        5432
+    )
+)
+
+
+# Optional Settings
+
+AWS_PROFILE = os.environ.get(
+    "AWS_PROFILE",
+    "default"
+)
