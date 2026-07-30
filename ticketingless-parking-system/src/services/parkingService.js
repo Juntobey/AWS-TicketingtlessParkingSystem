@@ -2,10 +2,12 @@ import API_BASE_URL from "./api";
 
 export async function getParkingSession(licensePlate) {
 
+    const sanitized = encodeURIComponent(licensePlate.trim().toUpperCase());
+
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/parking/${licensePlate}`
+            `${API_BASE_URL}/parking/${sanitized}`
         );
 
         if (!response.ok) {

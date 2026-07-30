@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import psycopg
 from psycopg.rows import dict_row
@@ -87,7 +87,7 @@ def create_entry(
                 (
                     license_plate,
                     image_key,
-                    datetime.utcnow()
+                    datetime.now(tz=timezone.utc)
                 )
             )
 
@@ -120,7 +120,7 @@ def update_exit(
                     exit_time IS NULL;
                 """,
                 (
-                    datetime.utcnow(),
+                    datetime.now(tz=timezone.utc),
                     license_plate
                 )
             )

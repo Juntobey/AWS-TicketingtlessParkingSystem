@@ -1,7 +1,6 @@
 /*=========================================================
   TICKETLESS PARKING SYSTEM
-  DESIGN SYSTEM v3.0 -- rewritten to match the current
-  component markup (ImageUploader / ReceiptCard / StatusBadge)
+  DESIGN SYSTEM v3.0 -- Light / White Theme
 ==========================================================*/
 
 /*=========================================================
@@ -14,45 +13,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /*=========================================================
-  DESIGN TOKENS
+  DESIGN TOKENS (LIGHT THEME)
 ==========================================================*/
 
 :root{
 
   /*-------------------------------------------------------
-    Grayscale / Skeletal Tokens
+    Grayscale / Skeletal Tokens (Light Theme)
   -------------------------------------------------------*/
-  --bg-app: #090d16;        /* Deep obsidian canvas (reduces glare from camera feeds) */
-  --bg-surface: #131a26;    /* Elevated surface card background */
-  --border-subtle: #222f43; /* Structural grid lines */
+  --bg-app: #f8fafc;        /* Clean, off-white canvas */
+  --bg-surface: #ffffff;    /* Elevated surface card background */
+  --border-subtle: #e2e8f0; /* Crisp structural grid lines */
 
   /*-------------------------------------------------------
     Typography Hierarchy
   -------------------------------------------------------*/
-  --text-primary: #f1f5f9;  /* High-contrast data and license strings */
-  --text-muted: #94a3b8;    /* UI labels and step descriptions */
+  --text-primary: #0f172a;  /* High-contrast dark slate */
+  --text-muted: #64748b;    /* Medium slate for labels and descriptions */
 
   /*-------------------------------------------------------
     Brand / Action Tokens
   -------------------------------------------------------*/
-  --action-primary: #3b82f6; /* Focused clickable buttons ("Process Vehicle") */
-  --action-hover: #2563eb;   /* Interactive hover states */
+  --action-primary: #2563eb; /* Focused clickable buttons ("Process Vehicle") */
+  --action-hover: #1d4ed8;   /* Interactive hover states */
 
   /*-------------------------------------------------------
     Pipeline State Tokens (crucial for ticketless UI)
   -------------------------------------------------------*/
-  --state-idle: #475569;    /* Empty states / ready to receive file */
+  --state-idle: #64748b;    /* Empty states / ready to receive file */
   --state-success: #10b981; /* Valid plate read / successful payment */
   --state-warning: #f59e0b; /* Low-confidence OCR scan / manual edit required */
   --state-danger: #ef4444;  /* Final outstanding balance due / API error */
 
   /*-------------------------------------------------------
-    Extended tokens -- derived from the same palette,
-    needed to build the components below.
+    Extended tokens
   -------------------------------------------------------*/
-  --bg-inset: #0d1420;
-  --border-hover: #33557c;
-  --text-secondary: #cbd5e1;
+  --bg-inset: #f1f5f9;      /* Light grey background for dropzones & inputs */
+  --border-hover: #94a3b8;  /* Darker border state on hover */
+  --text-secondary: #334155;
 
   --font-ui: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -66,8 +64,9 @@
   --radius-sm: 10px;
   --radius-md: 18px;
 
-  --shadow-card: 0 18px 40px rgba(0,0,0,.30);
-  --shadow-hover: 0 22px 60px rgba(0,0,0,.40);
+  /* Realistic light-mode shadows */
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
 
   /* Strict max width so the dashboard can't stretch/drift apart on ultrawide monitors */
   --container: 1200px;
@@ -159,12 +158,6 @@ label:focus-within{
 
 /*=========================================================
   PAGE GRID
-  #root is the real, flat parent of every top-level section
-  (Home renders a Fragment, so nav / .hero / .upload /
-  .receipt / .contact / .footer all land directly here).
-  A named-area grid gives the two-column dashboard AND pins
-  the footer to the bottom on short pages, with no wrapper
-  <div> needed in the markup.
 ==========================================================*/
 
 #root{
@@ -203,8 +196,6 @@ nav       { grid-area: nav; }
 
 /*=========================================================
   NAVBAR
-  No wrapper classes in the markup (just <nav><div
-  class="logo"><ul>) so the bare tags carry the layout.
 ==========================================================*/
 
 nav{
@@ -213,7 +204,7 @@ nav{
   z-index: 999;
   width: 100%;
   backdrop-filter: blur(12px);
-  background: rgba(9,13,22,.90);
+  background: rgba(255, 255, 255, 0.85);
   border-bottom: 1px solid var(--border-subtle);
 
   display: flex;
@@ -260,10 +251,6 @@ nav > ul a:hover{
 
 /*=========================================================
   HERO
-  hero-content has no inner wrapper div, so h1/p/a are
-  styled as direct children -- keeping this a single
-  centred column (not a grid) is what stops the heading
-  and paragraph splitting apart into separate columns.
 ==========================================================*/
 
 .hero{
@@ -349,9 +336,6 @@ nav > ul a:hover{
 
 /*=========================================================
   FILE INPUT
-  Restyled in place (no dropzone wrapper in the markup) --
-  the native input becomes a spacious dashed drop target,
-  and the built-in browser button is themed to match.
 ==========================================================*/
 
 .upload-card input[type="file"]{
@@ -369,7 +353,7 @@ nav > ul a:hover{
 
 .upload-card input[type="file"]:hover{
   border-color: var(--action-primary);
-  background: #0f1826;
+  background: #e0f2fe;
 }
 
 .upload-card input[type="file"]::file-selector-button{
@@ -431,10 +415,6 @@ nav > ul a:hover{
 
 /*=========================================================
   VEHICLE STATUS -- RADIO GROUP
-  No pill classes in the markup, so plain <label><input>
-  pairs are turned into a segmented control using only
-  element/attribute selectors -- :has() lights up whichever
-  one is checked without any JS-driven class needed.
 ==========================================================*/
 
 .radio-group{
@@ -468,7 +448,7 @@ nav > ul a:hover{
 
 .radio-group label:has(input:checked){
   border-color: var(--action-primary);
-  background: rgba(59,130,246,.12);
+  background: rgba(37, 99, 235, 0.08);
   color: var(--text-primary);
 }
 
@@ -490,15 +470,15 @@ nav > ul a:hover{
 }
 
 .message.success{
-  background: rgba(16,185,129,.10);
+  background: rgba(16, 185, 129, 0.10);
   border: 1px solid var(--state-success);
-  color: var(--state-success);
+  color: #047857;
 }
 
 .message.error{
-  background: rgba(239,68,68,.10);
+  background: rgba(239, 68, 68, 0.10);
   border: 1px solid var(--state-danger);
-  color: var(--state-danger);
+  color: #b91c1c;
 }
 
 /*=========================================================
@@ -584,12 +564,6 @@ nav > ul a:hover{
 
 /*=========================================================
   RECEIPT KEY / VALUE ROWS
-  Each row is a plain <p><strong>Label:</strong> value</p>.
-  display:flex on the <p> turns <strong> into one flex item
-  and wraps the trailing text (or the StatusBadge element)
-  into a second flex item, so justify-content:space-between
-  pins the label left and the value right with no extra
-  markup needed.
 ==========================================================*/
 
 .receipt-content p{
@@ -614,7 +588,7 @@ nav > ul a:hover{
   margin-top: .25rem;
   border-top: 1px solid var(--border-subtle);
   font-size: 1.2rem;
-  color: var(--state-success);
+  color: #047857;
 }
 
 .receipt-content p strong{
@@ -641,21 +615,21 @@ nav > ul a:hover{
 }
 
 .status-badge.entry{
-  background: rgba(59,130,246,.12);
+  background: rgba(37, 99, 235, 0.1);
   border: 1px solid var(--action-primary);
-  color: #93c5fd;
+  color: #1d4ed8;
 }
 
 .status-badge.exit{
-  background: rgba(16,185,129,.12);
+  background: rgba(16, 185, 129, 0.1);
   border: 1px solid var(--state-success);
-  color: var(--state-success);
+  color: #047857;
 }
 
 .status-badge.processing{
-  background: rgba(245,158,11,.12);
+  background: rgba(245, 158, 11, 0.1);
   border: 1px solid var(--state-warning);
-  color: var(--state-warning);
+  color: #b45309;
 }
 
 /*=========================================================
@@ -711,8 +685,6 @@ nav > ul a:hover{
 
 /*=========================================================
   FOOTER
-  No .footer-content wrapper in the markup, so the container
-  width/centering lives on the <p> itself.
 ==========================================================*/
 
 .footer{

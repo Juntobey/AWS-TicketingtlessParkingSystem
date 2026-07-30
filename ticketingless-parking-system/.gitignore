@@ -22,3 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables — never commit secrets
+.env
+.env.*
+!.env.example
+
+# Lambda build artifacts
+backend/lambda_package.zip
+backend/*.zip
+
+# Python cache and build artifacts
+backend/__pycache__/
+backend/bin/
+backend/*.dist-info/
+backend/*.egg-info/
+__pycache__/
+*.pyc
+*.pyo

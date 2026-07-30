@@ -31,6 +31,9 @@ def process_vehicle(image_bytes, status):
     Database
     """
 
+    if not image_bytes:
+        raise ValueError("image_bytes cannot be null or empty.")
+
    
     # Upload image to Cape Town
     

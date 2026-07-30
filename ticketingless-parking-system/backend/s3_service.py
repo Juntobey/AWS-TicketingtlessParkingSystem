@@ -1,4 +1,5 @@
 import uuid
+import os
 import boto3
 
 from config import (
@@ -6,6 +7,8 @@ from config import (
     SOURCE_BUCKET,
     REKOGNITION_BUCKET
 )
+
+AWS_ACCOUNT_ID = os.environ.get("AWS_ACCOUNT_ID", "")
 
 
 # S3 Clients
@@ -61,7 +64,9 @@ def copy_to_rekognition_bucket(key):
     rekognition_s3.copy_object(
         CopySource=copy_source,
         Bucket=REKOGNITION_BUCKET,
-        Key=key
+        Key=key,
+        ExpectedBucketOwner=AWS_ACCOUNT_ID,
+        ExpectedSourceBucketOwner=AWS_ACCOUNT_ID
     )
 
     return key
