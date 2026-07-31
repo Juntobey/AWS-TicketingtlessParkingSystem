@@ -29,17 +29,17 @@ rekognition_s3 = boto3.client(
 # Generate Unique Image Name
 
 
-def generate_key():
+def generate_key(status="entry"):
 
-    return f"vehicles/{uuid.uuid4()}.jpg"
+    return f"uploads/{status.lower()}/{uuid.uuid4()}.jpg"
 
 
 
 # Upload Image to Cape Town Bucket
 
-def upload_image(image_bytes):
+def upload_image(image_bytes, status="entry"):
 
-    key = generate_key()
+    key = generate_key(status)
 
     source_s3.put_object(
         Bucket=SOURCE_BUCKET,

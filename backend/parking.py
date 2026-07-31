@@ -10,7 +10,8 @@ from rekognition_service import (
 from database import (
     create_entry,
     update_exit,
-    find_active_session
+    find_active_session,
+    is_registered
 )
 
 
@@ -39,7 +40,8 @@ def process_vehicle(image_bytes, status):
     
 
     image_key = upload_image(
-        image_bytes
+        image_bytes,
+        status
     )
 
     
@@ -79,22 +81,26 @@ def process_vehicle(image_bytes, status):
 
     if status == "Entry":
 
-        create_entry(
+        if not is_registered(license_plate):
 
-            license_plate,
-            image_key
+            return {
+                "success": False,
+                "status": "Entry",
+                "licensePlate": license_plate,
+                "confidence": confidence,
+                "pattern": pattern,
+                "message": "Vehicle is not registered."
+            }
 
-        )
+        create_entry(license_plate, image_key)
 
         return {
-
             "success": True,
             "status": "Entry",
             "licensePlate": license_plate,
             "confidence": confidence,
             "pattern": pattern,
             "message": "Vehicle entered successfully."
-
         }
 
     
@@ -107,19 +113,16 @@ def process_vehicle(image_bytes, status):
 
     if session:
 
-        update_exit(
-            license_plate
-        )
+        fee = update_exit(license_plate)
 
         return {
-
             "success": True,
             "status": "Exit",
             "licensePlate": license_plate,
             "confidence": confidence,
             "pattern": pattern,
-            "message": "Vehicle exited successfully."
-
+            "fee": fee,
+            "message": f"Vehicle exited successfully. Fee: R{fee:.2f}"
         }
 
     
