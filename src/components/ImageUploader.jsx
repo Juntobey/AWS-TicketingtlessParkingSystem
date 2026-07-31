@@ -37,37 +37,20 @@ function ImageUploader({ setReceipt }) {
     setLoading(true);
 
     try {
-      // Backend call (Sprint 2)
-      await uploadVehicleImage(vehicleImage, vehicleStatus);
+      const result = await uploadVehicleImage(vehicleImage, vehicleStatus);
 
-      // Temporary parking session
-      const parkingReceipt = {
-        licensePlate: "ABC123GP",
-        status: vehicleStatus,
-        entryTime: new Date().toLocaleString(),
-        exitTime:
-          vehicleStatus === "Exit"
-            ? new Date().toLocaleString()
-            : "--",
-        duration:
-          vehicleStatus === "Exit"
-            ? "2 Hours"
-            : "In Progress",
-        fee:
-          vehicleStatus === "Exit"
-            ? "R20.00"
-            : "R0.00",
-      };
+      setReceipt({
+        licensePlate: result.licensePlate,
+        status: result.status,
+        entryTime: result.entryTime ?? new Date().toLocaleString(),
+        exitTime: result.exitTime ?? "--",
+        duration: result.duration ?? "In Progress",
+        fee: result.fee != null ? `R${result.fee.toFixed(2)}` : "R0.00",
+      });
 
-      // Update ReceiptCard
-      setReceipt(parkingReceipt);
-
-      setMessage("Vehicle processed successfully!");
+      setMessage(result.message || "Vehicle processed successfully!");
       setMessageType("success");
 
-      console.log(parkingReceipt);
-
-      // Reset form
       setVehicleImage(null);
       setVehicleStatus("Entry");
 
