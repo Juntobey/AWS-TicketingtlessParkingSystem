@@ -23,8 +23,8 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 3. Lambda uploads the image to S3 (Cape Town) and copies it to S3 (Ireland) for Rekognition
 4. Amazon Rekognition DetectText reads the licence plate number
 5. The plate is matched against South African licence plate patterns
-6. On **Entry** — a parking session is created in RDS PostgreSQL
-7. On **Exit** — the session is closed, duration calculated, and fee charged at R10/hour (rounded up)
+6. On **Entry**:  a parking session is created in RDS PostgreSQL
+7. On **Exit**: the session is closed, duration calculated, and fee charged at R10/hour (rounded up)
 8. The receipt is displayed on the frontend with plate, status, entry time, exit time, duration, and fee
 
 ---
@@ -50,7 +50,7 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 - Image upload with validation (JPG, PNG, WEBP, max 5MB)
 - Real-time active sessions list (refreshes every 30 seconds)
 - Status badges (Entry / Exit)
-- Full receipt display — plate, status, entry time, exit time, duration, fee
+- Full receipt display, plate, status, entry time, exit time, duration, fee
 - Mobile responsive layout
 - Licence plate masking for privacy
 
