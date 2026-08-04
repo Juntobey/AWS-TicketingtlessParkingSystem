@@ -32,30 +32,6 @@ def get_connection():
 HOURLY_RATE = 10.00  # ZAR per hour
 
 
-# Check if Vehicle is Registered
-
-def is_registered(license_plate):
-    """
-    Returns True if the plate exists in registered_vehicles.
-    """
-
-    with get_connection() as connection:
-
-        with connection.cursor() as cursor:
-
-            cursor.execute(
-                """
-                SELECT 1
-                FROM registered_vehicles
-                WHERE license_plate = %s
-                LIMIT 1;
-                """,
-                (license_plate,)
-            )
-
-            return cursor.fetchone() is not None
-
-
 # Find Active Parking Session
 
 def find_active_session(license_plate):
@@ -76,6 +52,30 @@ def find_active_session(license_plate):
             )
 
             return cursor.fetchone()
+
+
+# Get All Active Sessions
+
+def get_active_sessions():
+
+    with get_connection() as connection:
+
+        with connection.cursor() as cursor:
+
+            cursor.execute(
+                """
+                SELECT license_plate, entry_timestamp, s3_image_url
+                FROM parking_sessions
+                WHERE session_status = 'ACTIVE'
+                ORDER BY entry_timestamp DESC;
+                """
+            )
+
+            rows = cursor.fetchall()
+            for r in rows:
+                if r["entry_timestamp"] and r["entry_timestamp"].tzinfo is None:
+                    r["entry_timestamp"] = r["entry_timestamp"].replace(tzinfo=timezone.utc)
+            return rows
 
 
 # Create Parking Entry
@@ -117,9 +117,8 @@ def update_exit(license_plate):
                     exit_timestamp = %s,
                     session_status = 'COMPLETED',
                     calculated_fee = (
-                        GREATEST(
-                            EXTRACT(EPOCH FROM (%s - entry_timestamp)) / 3600,
-                            1
+                        CEIL(
+                            EXTRACT(EPOCH FROM (%s - entry_timestamp)) / 3600.0
                         ) * %s
                     )
                 WHERE license_plate = %s
