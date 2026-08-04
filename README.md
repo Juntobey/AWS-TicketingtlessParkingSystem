@@ -6,13 +6,13 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 
 ## Demo
 
-> 📹 [Watch Demo Video](./demo.mp4)
+> 📹 [Watch Demo Video](https://drive.google.com/file/d/1rFe1QE0IbtmK-8ryoLte02lURFefCfsJ/view?usp=sharing)
 
 ---
 
 ## Architecture Diagram
 
-> 📐 [View Architecture Diagram](demonstration-video-and-architecture-diagram/ticketless-parking-system.png)
+> 📐![View Architecture Diagram](demonstration-video-and-architecture-diagram/ticketless-parking-system.png)
 
 ---
 
@@ -147,7 +147,7 @@ aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
 **Backend:**
 ```bash
 # Package and deploy Lambda from CloudShell
-pip install boto3 psycopg[binary] typing_extensions -t . --platform manylinux2014_x86_64 --python-version 3.12 --only-binary=:all:
+pip install boto3 psycopg[binary] typing_extensions -t . --platform manylinux2014_x86_64 --python-version 3.14 --only-binary=:all:
 zip -r lambda_package.zip.
 aws lambda update-function-code --function-name <function-name> --zip-file fileb://lambda_package.zip --region af-south-1
 ```
@@ -167,6 +167,6 @@ aws lambda update-function-code --function-name <function-name> --zip-file fileb
 ## Tech Stack
 
 - **Frontend:** React 18, Vite, CSS Grid
-- **Backend:** Python 3.12, AWS Lambda, psycopg3, boto3
-- **Database:** PostgreSQL on Amazon RDS
+- **Backend:** Python 3.14, AWS Lambda, psycopg3, boto3
+- **Database:** PostgreSQL on Amazon RDS, pgAdmin
 - **Cloud:** AWS (S3, Lambda, API Gateway, Rekognition, RDS, CloudFront)
