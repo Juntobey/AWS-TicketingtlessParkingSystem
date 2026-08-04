@@ -1,6 +1,6 @@
 # Ticketless Parking System
 
-A cloud-native, ticketless parking management system built on AWS. Vehicles are identified automatically using licence plate recognition — no physical tickets required.
+A cloud-native, ticketless parking management system built on AWS. Vehicles are identified automatically using licence plate recognition; no physical tickets are required.
 
 ---
 
@@ -18,7 +18,7 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 
 ## How It Works
 
-1. A vehicle arrives and the operator uploads a photo of the licence plate
+1. A vehicle arrives, and the operator uploads a photo of the licence plate
 2. The image is sent to AWS Lambda via API Gateway
 3. Lambda uploads the image to S3 (Cape Town) and copies it to S3 (Ireland) for Rekognition
 4. Amazon Rekognition DetectText reads the licence plate number
@@ -148,7 +148,7 @@ aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
 ```bash
 # Package and deploy Lambda from CloudShell
 pip install boto3 psycopg[binary] typing_extensions -t . --platform manylinux2014_x86_64 --python-version 3.12 --only-binary=:all:
-zip -r lambda_package.zip .
+zip -r lambda_package.zip.
 aws lambda update-function-code --function-name <function-name> --zip-file fileb://lambda_package.zip --region af-south-1
 ```
 
