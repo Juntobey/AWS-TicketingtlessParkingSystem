@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from s3_service import (
     upload_image,
     copy_to_rekognition_bucket
@@ -39,7 +40,8 @@ def process_vehicle(image_bytes, status):
     
 
     image_key = upload_image(
-        image_bytes
+        image_bytes,
+        status
     )
 
     
@@ -79,22 +81,18 @@ def process_vehicle(image_bytes, status):
 
     if status == "Entry":
 
-        create_entry(
+        entry_time = datetime.now(tz=timezone.utc).isoformat()
 
-            license_plate,
-            image_key
-
-        )
+        create_entry(license_plate, image_key)
 
         return {
-
             "success": True,
             "status": "Entry",
             "licensePlate": license_plate,
             "confidence": confidence,
             "pattern": pattern,
+            "entryTime": entry_time,
             "message": "Vehicle entered successfully."
-
         }
 
     
@@ -107,19 +105,26 @@ def process_vehicle(image_bytes, status):
 
     if session:
 
-        update_exit(
-            license_plate
-        )
+        exit_time = datetime.now(tz=timezone.utc)
+        entry_time = session.get("entry_timestamp")
+        duration_mins = None
+        if entry_time:
+            delta = exit_time - entry_time
+            duration_mins = round(delta.total_seconds() / 60, 1)
+
+        fee = update_exit(license_plate)
 
         return {
-
             "success": True,
             "status": "Exit",
             "licensePlate": license_plate,
             "confidence": confidence,
             "pattern": pattern,
-            "message": "Vehicle exited successfully."
-
+            "entryTime": entry_time.isoformat() if entry_time else None,
+            "exitTime": exit_time.isoformat(),
+            "duration": duration_mins,
+            "fee": fee,
+            "message": f"Vehicle exited successfully. Fee: R{fee:.2f}"
         }
 
     
