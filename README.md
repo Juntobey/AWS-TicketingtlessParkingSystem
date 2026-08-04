@@ -36,7 +36,7 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 | Amazon S3 (af-south-1) | Stores vehicle images uploaded from the frontend |
 | Amazon S3 (eu-west-1) | Temporary copy for Rekognition (only available in select regions) |
 | Amazon Rekognition | DetectText API to read licence plate numbers |
-| AWS Lambda (Python 3.12) | Core processing — image upload, plate detection, RDS queries |
+| AWS Lambda (Python 3.14) | Core processing — image upload, plate detection, RDS queries |
 | Amazon API Gateway | Exposes REST endpoints to the React frontend |
 | Amazon RDS (PostgreSQL) | Stores parking sessions, plates, timestamps, and fees inside a VPC |
 | Amazon CloudFront | CDN for the React frontend |
