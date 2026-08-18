@@ -12,7 +12,7 @@ A cloud-native, ticketless parking management system built on AWS. Vehicles are 
 
 ## Architecture Diagram
 
-> 📐![View Architecture Diagram](demonstration-video-and-architecture-diagram/ticketless-parking-system.png)
+> 📐![View Architecture Diagram](demonstration-video-and-architecture-diagram/TicketlessParkingSystem.jpeg)
 
 ---
 
