@@ -9,13 +9,11 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
 function Home() {
-
   const [receipt, setReceipt] = useState(null);
 
   return (
     <>
       <Navbar />
-
       <Hero />
 
       <ImageUploader
@@ -29,7 +27,6 @@ function Home() {
       <SessionList />
 
       <Contact />
-
       <Footer />
     </>
   );
