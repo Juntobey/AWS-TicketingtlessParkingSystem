@@ -1,0 +1,33 @@
+{
+  "CallerReference": "ticketless-parking-2026",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [{
+      "Id": "S3-Website",
+      "DomainName": "ticketless-parking-website-tobey2026.s3-website.af-south-1.amazonaws.com",
+      "CustomOriginConfig": {
+        "HTTPPort": 80,
+        "HTTPSPort": 443,
+        "OriginProtocolPolicy": "http-only"
+      }
+    }]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "S3-Website",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+    "AllowedMethods": {
+      "Quantity": 2,
+      "Items": ["GET", "HEAD"],
+      "CachedMethods": {"Quantity": 2, "Items": ["GET", "HEAD"]}
+    },
+    "Compress": true
+  },
+  "CustomErrorResponses": {
+    "Quantity": 1,
+    "Items": [{"ErrorCode": 403, "ResponsePagePath": "/index.html", "ResponseCode": "200", "ErrorCachingMinTTL": 0}]
+  },
+  "Comment": "Ticketless Parking Frontend",
+  "Enabled": true,
+  "DefaultRootObject": "index.html"
+}

@@ -31,6 +31,8 @@ dist-ssr
 # Lambda build artifacts
 backend/lambda_package.zip
 backend/*.zip
+backend/package/
+backend/init_db.py
 
 # Python cache and build artifacts
 backend/__pycache__/

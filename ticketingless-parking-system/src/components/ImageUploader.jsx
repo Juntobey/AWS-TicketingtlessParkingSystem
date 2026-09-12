@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ImagePreview from "./ImagePreview";
-
 import { uploadVehicleImage } from "../services/uploadService";
 import { validateVehicleImage } from "../utils/validators";
 
@@ -8,26 +7,30 @@ function ImageUploader({ setReceipt }) {
   const [vehicleImage, setVehicleImage] = useState(null);
   const [vehicleStatus, setVehicleStatus] = useState("Entry");
   const [loading, setLoading] = useState(false);
-
+  const [gateMessage, setGateMessage] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
   function handleImageChange(event) {
     const file = event.target.files[0];
-
     if (file) {
       setVehicleImage(file);
-
-      // Clear previous messages
       setMessage("");
       setMessageType("");
     }
   }
 
-  async function handleSubmit() {
-    // Validate uploaded image
-    const validationError = validateVehicleImage(vehicleImage);
+  function reset() {
+    setVehicleImage(null);
+    setVehicleStatus("Entry");
+    setMessage("");
+    setMessageType("");
+    setGateMessage("");
+    setReceipt(null);
+  }
 
+  async function handleSubmit() {
+    const validationError = validateVehicleImage(vehicleImage);
     if (validationError) {
       setMessage(validationError);
       setMessageType("error");
@@ -35,45 +38,30 @@ function ImageUploader({ setReceipt }) {
     }
 
     setLoading(true);
-
     try {
-      // Backend call (Sprint 2)
-      await uploadVehicleImage(vehicleImage, vehicleStatus);
+      const result = await uploadVehicleImage(vehicleImage, vehicleStatus);
 
-      // Temporary parking session
-      const parkingReceipt = {
-        licensePlate: "ABC123GP",
-        status: vehicleStatus,
-        entryTime: new Date().toLocaleString(),
-        exitTime:
-          vehicleStatus === "Exit"
-            ? new Date().toLocaleString()
-            : "--",
-        duration:
-          vehicleStatus === "Exit"
-            ? "2 Hours"
-            : "In Progress",
-        fee:
-          vehicleStatus === "Exit"
-            ? "R20.00"
-            : "R0.00",
-      };
+      setReceipt({
+        licensePlate: result.licensePlate,
+        status: result.status,
+        entryTime: result.entryTime ? new Date(result.entryTime).toLocaleString() : new Date().toLocaleString(),
+        exitTime: result.exitTime ? new Date(result.exitTime).toLocaleString() : "--",
+        duration: result.duration != null ? `${result.duration} min` : "In Progress",
+        fee: result.fee != null ? `R${result.fee.toFixed(2)}` : "R0.00",
+      });
 
-      // Update ReceiptCard
-      setReceipt(parkingReceipt);
+      const msg = result.status === "Entry"
+        ? "✓ Gate Opening — Drive Safe"
+        : "✓ Session Complete — Thank You";
 
-      setMessage("Vehicle processed successfully!");
-      setMessageType("success");
-
-      console.log(parkingReceipt);
-
-      // Reset form
+      setGateMessage(msg);
+      setMessage("");
       setVehicleImage(null);
-      setVehicleStatus("Entry");
+
+      setTimeout(reset, 30000);
 
     } catch (error) {
       console.error(error);
-
       setMessage("Unable to process the vehicle. Please try again.");
       setMessageType("error");
     } finally {
@@ -140,12 +128,12 @@ function ImageUploader({ setReceipt }) {
 
         </div>
 
-        {/* Success/Error Message */}
-        {message && (
-          <div className={`message ${messageType}`}>
-            {message}
-          </div>
-        )}
+        {/* Gate message / error */}
+        {gateMessage ? (
+          <div className="message success gate-message">{gateMessage}</div>
+        ) : message ? (
+          <div className={`message ${messageType}`}>{message}</div>
+        ) : null}
 
         <button
           onClick={handleSubmit}

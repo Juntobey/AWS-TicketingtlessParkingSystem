@@ -3,39 +3,40 @@ import StatusBadge from "./StatusBadge";
 
 function maskPlate(plate) {
   if (!plate || plate.length < 4) return plate;
-  const parts = plate.trim().split(/\s+/);
-  if (parts.length >= 3) {
-    return `${parts[0]} *** ${parts[parts.length - 1]}`;
-  }
-  return plate.slice(0, -3) + "***";
+  return plate.slice(0, 2) + "***" + plate.slice(-2);
 }
 
-function ReceiptCard({ receipt, onClear }) {
-  const isExit = receipt?.status === "Exit";
-  const initialCountdown = isExit ? 300 : 30;
-  const [countdown, setCountdown] = useState(initialCountdown);
+function formatCountdown(s) {
+  if (s >= 60) return `${Math.floor(s / 60)}m ${s % 60}s`;
+  return `${s}s`;
+}
+
+function ReceiptCard({ receipt }) {
+  const isExit = receipt?.status?.toLowerCase() === "exit";
+  const duration = isExit ? 300 : 30;
+
+  const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
-    if (!receipt) return;
-    setCountdown(isExit ? 300 : 30);
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) { clearInterval(interval); onClear(); return 0; }
-        return prev - 1;
+    if (!receipt) { setCountdown(null); return; }
+    setCountdown(duration);
+    const id = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) { clearInterval(id); return 0; }
+        return c - 1;
       });
     }, 1000);
-    return () => clearInterval(interval);
+    return () => clearInterval(id);
   }, [receipt]);
 
-  if (!receipt) {
+  if (!receipt || countdown === 0) {
     return (
       <section id="receipt" className="receipt">
         <div className="receipt-card">
           <h2>Parking Session Details</h2>
           <p className="receipt-message">No parking session available.</p>
           <p className="receipt-message">
-            Upload a vehicle image and click
-            <strong> Process Vehicle </strong>
+            Upload a vehicle image and click <strong> Process Vehicle </strong>
             to create a parking session.
           </p>
         </div>
@@ -43,15 +44,10 @@ function ReceiptCard({ receipt, onClear }) {
     );
   }
 
-
-
   return (
     <section id="receipt" className="receipt">
       <div className="receipt-card">
-        <div className="receipt-header">
-          <h2>Parking Session Details</h2>
-          <span className="receipt-countdown">Clearing in {countdown > 60 ? `${Math.ceil(countdown / 60)}m ${countdown % 60}s` : `${countdown}s`}</span>
-        </div>
+        <h2>Parking Session Details</h2>
 
         <div className="receipt-content">
           <p>
@@ -63,17 +59,17 @@ function ReceiptCard({ receipt, onClear }) {
             <StatusBadge status={receipt.status} />
           </p>
           <p>
-            <strong>Entry Time:</strong>
+            <strong>Entry Date &amp; Time:</strong>
             {receipt.entryTime}
           </p>
           {isExit && (
             <>
               <p>
-                <strong>Exit Time:</strong>
+                <strong>Exit Date &amp; Time:</strong>
                 {receipt.exitTime}
               </p>
               <p>
-                <strong>Duration:</strong>
+                <strong>Parking Duration:</strong>
                 {receipt.duration}
               </p>
               <p>
@@ -83,6 +79,10 @@ function ReceiptCard({ receipt, onClear }) {
             </>
           )}
         </div>
+
+        <p className="countdown-badge">
+          Clears in {formatCountdown(countdown)}
+        </p>
       </div>
     </section>
   );

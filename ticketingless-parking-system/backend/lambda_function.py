@@ -3,6 +3,7 @@ import base64
 import os
 
 from parking import process_vehicle
+from database import get_active_sessions
 
 ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
 
@@ -14,14 +15,37 @@ CORS_HEADERS = {
 }
 
 
+def get_cors_headers(event):
+    origin = (event.get("headers") or {}).get("origin", "").rstrip(".")
+    allowed = ALLOWED_ORIGIN if origin == ALLOWED_ORIGIN else "*"
+    return {**CORS_HEADERS, "Access-Control-Allow-Origin": allowed}
+
+
 def lambda_handler(event, context):
     """
     AWS Lambda entry point.
     """
 
+    headers = get_cors_headers(event)
+
     # Handle CORS preflight
     if event.get("httpMethod") == "OPTIONS":
-        return {"statusCode": 200, "headers": CORS_HEADERS, "body": ""}
+        return {"statusCode": 200, "headers": headers, "body": ""}
+
+    # Active sessions endpoint
+    if event.get("httpMethod") == "GET" and event.get("path") == "/sessions":
+        try:
+            sessions = get_active_sessions()
+            data = [
+                {
+                    "licensePlate": s["license_plate"],
+                    "entryTime": s["entry_timestamp"].isoformat()
+                }
+                for s in sessions
+            ]
+            return {"statusCode": 200, "headers": headers, "body": json.dumps(data)}
+        except Exception as e:
+            return {"statusCode": 500, "headers": headers, "body": json.dumps({"error": str(e)})}
 
     try:
 
@@ -33,7 +57,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 400,
-            "headers": CORS_HEADERS,
+            "headers": headers,
             "body": json.dumps({"success": False, "message": "Invalid JSON request."})
         }
 
@@ -44,7 +68,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 400,
-            "headers": CORS_HEADERS,
+            "headers": headers,
             "body": json.dumps({"success": False, "message": "Image is required."})
         }
 
@@ -52,7 +76,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 400,
-            "headers": CORS_HEADERS,
+            "headers": headers,
             "body": json.dumps({"success": False, "message": "Status must be 'Entry' or 'Exit'."})
         }
 
@@ -69,7 +93,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
-            "headers": CORS_HEADERS,
+            "headers": headers,
             "body": json.dumps(result)
         }
 
@@ -77,6 +101,6 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 500,
-            "headers": CORS_HEADERS,
+            "headers": headers,
             "body": json.dumps({"success": False, "message": "Internal server error.", "error": str(error)})
         }

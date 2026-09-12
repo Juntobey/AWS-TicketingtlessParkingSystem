@@ -15,9 +15,17 @@ function Home() {
     <>
       <Navbar />
       <Hero />
-      <ImageUploader setReceipt={setReceipt} />
-      <ReceiptCard receipt={receipt} onClear={() => setReceipt(null)} />
+
+      <ImageUploader
+        setReceipt={setReceipt}
+      />
+
+      <ReceiptCard
+        receipt={receipt}
+      />
+
       <SessionList />
+
       <Contact />
       <Footer />
     </>
