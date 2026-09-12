@@ -1,6 +1,8 @@
 # Ticketless Parking System
 
 A cloud-native, ticketless parking management system built on AWS. Vehicles are identified automatically using licence plate recognition; no physical tickets are required.
+ **Note:** The live AWS deployment (Lambda, API Gateway, RDS, S3) has been decommissioned to avoid ongoing cloud costs. The full source, architecture, and a working demo video are included below. The CI/CD pipeline lints and builds automatically; the backend deploy step is manual-trigger only and requires AWS credentials to run.
+
 
 ---
 
