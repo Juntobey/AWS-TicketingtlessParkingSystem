@@ -1,30 +1,53 @@
+/*=========================================================
+  TICKETLESS PARKING SYSTEM
+  DESIGN SYSTEM v3.0 -- Light / White Theme
+==========================================================*/
 
+/*=========================================================
+  GOOGLE FONTS
+  Inter carries UI copy. JetBrains Mono carries anything
+  that reads like a machine/API output (plate strings,
+  timestamps, currency, status codes).
+==========================================================*/
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-
+/*=========================================================
+  DESIGN TOKENS (LIGHT THEME)
+==========================================================*/
 
 :root{
 
-
+  /*-------------------------------------------------------
+    Grayscale / Skeletal Tokens (Light Theme)
+  -------------------------------------------------------*/
   --bg-app: #f8fafc;        /* Clean, off-white canvas */
   --bg-surface: #ffffff;    /* Elevated surface card background */
   --border-subtle: #e2e8f0; /* Crisp structural grid lines */
 
- 
+  /*-------------------------------------------------------
+    Typography Hierarchy
+  -------------------------------------------------------*/
   --text-primary: #0f172a;  /* High-contrast dark slate */
   --text-muted: #64748b;    /* Medium slate for labels and descriptions */
 
-
+  /*-------------------------------------------------------
+    Brand / Action Tokens
+  -------------------------------------------------------*/
   --action-primary: #2563eb; /* Focused clickable buttons ("Process Vehicle") */
   --action-hover: #1d4ed8;   /* Interactive hover states */
 
+  /*-------------------------------------------------------
+    Pipeline State Tokens (crucial for ticketless UI)
+  -------------------------------------------------------*/
   --state-idle: #64748b;    /* Empty states / ready to receive file */
   --state-success: #10b981; /* Valid plate read / successful payment */
   --state-warning: #f59e0b; /* Low-confidence OCR scan / manual edit required */
   --state-danger: #ef4444;  /* Final outstanding balance due / API error */
 
- 
+  /*-------------------------------------------------------
+    Extended tokens
+  -------------------------------------------------------*/
   --bg-inset: #f1f5f9;      /* Light grey background for dropzones & inputs */
   --border-hover: #94a3b8;  /* Darker border state on hover */
   --text-secondary: #334155;
@@ -55,7 +78,9 @@
   --tap-min: 48px;
 }
 
-
+/*=========================================================
+  RESET
+==========================================================*/
 
 *{
   margin: 0;
