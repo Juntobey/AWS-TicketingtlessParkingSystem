@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../services/api";
+import API_BASE_URL from "../services/api";
 import StatusBadge from "./StatusBadge";
 
 function maskPlate(plate) {
   if (!plate || plate.length < 4) return plate;
   return plate.slice(0, 2) + "***" + plate.slice(-2);
 }
+
 
 function SessionList() {
   const [sessions, setSessions] = useState([]);
